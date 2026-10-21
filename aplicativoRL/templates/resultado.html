@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Algorithm Benchmark</title>
+  <style>
+    :root {
+      --bg-main: #001619;
+      --panel-bg: #032227;
+      --card-bg: #072f36;
+      --border-color: #0d4650;
+      --accent-cyan: #50E8F4;
+      --accent-soft: #C7F8FE;
+      --text-white: #ffffff;
+      --text-muted: #7ca8af;
+      --bar-nb: #C7F8FE;
+      --bar-rl: #50E8F4;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-white);
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .dashboard {
+      width: 100%;
+      max-width: 1240px;
+    }
+    /* HEADER */
+    .header-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .icon-badge {
+      background-color: var(--accent-cyan);
+      color: #001619;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .header-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-white);
+      letter-spacing: 0.3px;
+    }
+    .header-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+ 
+    /* GRID PRINCIPAL */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+ 
+    /* COLUNA CONFIGURAÇÕES */
+    .config-card {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .section-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--accent-soft);
+      margin-bottom: 8px;
+    }
+    .select-input {
+      width: 100%;
+      background-color: #001c20;
+      border: 1px solid var(--border-color);
+      color: var(--accent-soft);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--accent-soft);
+      margin-bottom: 8px;
+    }
+    .slider-header strong {
+      color: var(--accent-cyan);
+    }
+    .slider-bar {
+      width: 100%;
+      height: 6px;
+      background: #002d33;
+      border-radius: 3px;
+      position: relative;
+    }
+    .slider-progress {
+      width: 80%;
+      height: 100%;
+      background: var(--accent-cyan);
+      border-radius: 3px;
+    }
+    .slider-thumb {
+      position: absolute;
+      left: 80%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      border: 2px solid #001619;
+      box-shadow: 0 0 8px rgba(80, 232, 244, 0.6);
+    }
+    .btn-executar {
+      margin-top: 10px;
+      background-color: var(--accent-cyan);
+      color: #001619;
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-executar:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 0 12px rgba(80, 232, 244, 0.4);
+    }
+ 
+    /* COLUNA MÉTRICAS */
+    .metrics-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .metric-card {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .metric-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-soft);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .model-val-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .model-val-row .model-name {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .model-val-row .val-num {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent-soft);
+    }
+    .model-val-row.rl-row .val-num {
+      color: var(--accent-cyan);
+    }
+    .leader-tag {
+      font-size: 11px;
+      color: var(--accent-cyan);
+      margin-top: 12px;
+      display: block;
+      font-weight: 600;
+    }
+ 
+    /* COMPARATIVO VISUAL GRÁFICO */
+    .chart-panel {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 22px;
+    }
+    .chart-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 200px;
+      margin-top: 20px;
+      padding: 0 40px;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+    .bar-group {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      height: 100%;
+    }
+    .bar {
+      width: 44px;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.4s ease;
+      position: relative;
+    }
+    .bar-nb {
+      background-color: var(--bar-nb);
+    }
+    .bar-rl {
+      background-color: var(--bar-rl);
+      box-shadow: 0 0 10px rgba(80, 232, 244, 0.25);
+    }
+    .bar-label {
+      position: absolute;
+      bottom: -28px;
+      width: 100%;
+      text-align: center;
+      left: 0;
+      right: 0;
+      font-size: 13px;
+      color: var(--accent-soft);
+      font-weight: 500;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 40px;
+      font-size: 13px;
+      color: var(--accent-soft);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+ 
+  <div class="dashboard">
+    <!-- CABEÇALHO BENCHMARK -->
+    <div class="header-box">
+      <div class="icon-badge">&#10022;</div>
+      <div class="header-text">
+        <h1>ML Algorithm Benchmark</h1>
+        <span>NAIVE BAYES &bull; REGRESSÃO LOGÍSTICA</span>
+      </div>
+    </div>
+ 
+    <!-- GRID PRINCIPAL -->
+    <div class="main-grid">
+      <!-- CONFIGURAÇÕES -->
+      <div class="config-card">
+        <span class="section-tag">Configurações</span>
+        <div class="form-group">
+          <label>Algoritmo</label>
+          <select class="select-input">
+            <option>Ambos (NB + Regressão)</option>
+            <option>Naive Bayes</option>
+            <option>Regressão Logística</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="slider-header">
+            <span>Divisão Treino / Teste</span>
+            <strong>80% / 20%</strong>
+          </div>
+          <div class="slider-bar">
+            <div class="slider-progress"></div>
+            <div class="slider-thumb"></div>
+          </div>
+        </div>
+        <button class="btn-executar" onclick="window.location.reload();">Executar</button>
+      </div>
+ 
+      <!-- MÉTRICAS DE DESEMPENHO -->
+      <div class="metrics-container">
+        <span class="section-tag">Métricas de Desempenho</span>
+        <div class="metrics-row">
+          <!-- ACURÁCIA -->
+          <div class="metric-card">
+            <div class="metric-card-title">Acurácia</div>
+            <div class="model-val-row">
+              <span class="model-name">Naive Bayes</span>
+              <span class="val-num">{{ acc_nb }}%</span>
+            </div>
+            <div class="model-val-row rl-row">
+              <span class="model-name">Reg. Logística</span>
+              <span class="val-num">{{ acc_rl }}%</span>
+            </div>
+            <span class="leader-tag">&uarr; {{ leader_acc }}</span>
+          </div>
+ 
+          <!-- PRECISÃO -->
+          <div class="metric-card">
+            <div class="metric-card-title">Precisão</div>
+            <div class="model-val-row">
+              <span class="model-name">Naive Bayes</span>
+              <span class="val-num">{{ prec_nb }}%</span>
+            </div>
+            <div class="model-val-row rl-row">
+              <span class="model-name">Reg. Logística</span>
+              <span class="val-num">{{ prec_rl }}%</span>
+            </div>
+            <span class="leader-tag">&uarr; {{ leader_prec }}</span>
+          </div>
+ 
+          <!-- RECALL -->
+          <div class="metric-card">
+            <div class="metric-card-title">Recall</div>
+            <div class="model-val-row">
+              <span class="model-name">Naive Bayes</span>
+              <span class="val-num">{{ rec_nb }}%</span>
+            </div>
+            <div class="model-val-row rl-row">
+              <span class="model-name">Reg. Logística</span>
+              <span class="val-num">{{ rec_rl }}%</span>
+            </div>
+            <span class="leader-tag">&uarr; {{ leader_rec }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- GRÁFICO COMPARATIVO -->
+    <div class="chart-panel">
+      <span class="section-tag">Comparação Visual &mdash; Todas as Métricas</span>
+      <div class="chart-container">
+        <!-- Accuracy -->
+        <div class="bar-group">
+          <div class="bar bar-nb" style="height: {{ acc_nb }}%;" title="Naive Bayes: {{ acc_nb }}%"></div>
+          <div class="bar bar-rl" style="height: {{ acc_rl }}%;" title="Regressão Logística: {{ acc_rl }}%"></div>
+          <div class="bar-label">Accuracy</div>
+        </div>
+ 
+        <!-- Precision -->
+        <div class="bar-group">
+          <div class="bar bar-nb" style="height: {{ prec_nb }}%;" title="Naive Bayes: {{ prec_nb }}%"></div>
+          <div class="bar-label">Precision</div>
+          <div class="bar bar-rl" style="height: {{ prec_rl }}%;" title="Regressão Logística: {{ prec_rl }}%"></div>
+        </div>
+ 
+        <!-- Recall -->
+        <div class="bar-group">
+          <div class="bar bar-nb" style="height: {{ rec_nb }}%;" title="Naive Bayes: {{ rec_nb }}%"></div>
+          <div class="bar bar-rl" style="height: {{ rec_rl }}%;" title="Regressão Logística: {{ rec_rl }}%"></div>
+          <div class="bar-label">Recall</div>
+        </div>
+      </div>
+ 
+      <!-- LEGENDA -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-box" style="background: var(--bar-nb);"></div>
+          <span>Naive Bayes</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box" style="background: var(--bar-rl);"></div>
+          <span>Reg. Logística</span>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+</body>
+</html>
