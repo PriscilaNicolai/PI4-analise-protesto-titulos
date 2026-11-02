@@ -238,4 +238,4 @@ def executarRegressaoLogistica(request):
 
  
 
-    return render(request, "resultado.html",
+    return render(request, "resultado.html", contexto)
